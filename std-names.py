@@ -1,4 +1,6 @@
 import os
+import re
+
 
 # Get the current working directory (where the script is executing)
 directory_path = os.getcwd()
@@ -11,11 +13,15 @@ file_list = [file for file in file_list if file.endswith('.mp4')]
 
 # Rename the files with the reversed date order
 for filename in file_list:
-    parts = filename.split('.')
-    if len(parts) == 4:
-        day, month, year, extension = parts
-        if int(day) > 31:
-            print("skipped")
-            continue
-        new_filename = f"{year}.{month}.{day}.{extension}"
-        os.rename(os.path.join(directory_path, filename), os.path.join(directory_path, new_filename))
+    if "IELTS" not in filename:
+        continue
+
+    date_pattern = r"\d{2}\.\d{2}\.\d{4}"
+    dates = re.findall(date_pattern, filename)
+    parts = dates[0].split('.')
+    day, month, year = parts
+
+    extension = filename.split('.')[-1]
+
+    new_filename = f"{year}.{month}.{day}.{extension}"
+    os.rename(os.path.join(directory_path, filename), os.path.join(directory_path, new_filename))
